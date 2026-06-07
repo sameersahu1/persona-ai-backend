@@ -1,5 +1,8 @@
+backend_url = "https://persona-intelligence.up.railway.app/api/profile"
+
 import streamlit as st
 import requests
+
 
 # 1. Premium Page Setup
 st.set_page_config(
