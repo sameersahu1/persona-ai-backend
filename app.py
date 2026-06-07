@@ -965,7 +965,7 @@ if search_button and query_input:
     """, unsafe_allow_html=True)
 
     try:
-        backend_url = "https://persona-intelligence.up.railway.app/api/profile"
+        backend_url = "https://persona-intelligence-ai.up.railway.app/api/profile"
         response = requests.post(backend_url, json={"query": query_input}, timeout=45)
         loading_placeholder.empty()
 
