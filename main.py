@@ -22,6 +22,7 @@ groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 print("GROQ KEY EXISTS:", bool(os.getenv("GROQ_API_KEY")))
 print("TAVILY KEY EXISTS:", bool(os.getenv("TAVILY_API_KEY")))
+print("GROQ KEY PREFIX:", os.getenv("GROQ_API_KEY", "")[:4])
 
 class SearchRequest(BaseModel):
     query: str
