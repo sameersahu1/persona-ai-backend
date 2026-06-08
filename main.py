@@ -20,6 +20,9 @@ app = FastAPI(title="Persona Intelligence API (Groq Powered)")
 tavily_client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
 groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
+print("GROQ KEY EXISTS:", bool(os.getenv("GROQ_API_KEY")))
+print("TAVILY KEY EXISTS:", bool(os.getenv("TAVILY_API_KEY")))
+
 class SearchRequest(BaseModel):
     query: str
 
