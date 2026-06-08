@@ -5,3 +5,4 @@ tavily-python
 groq
 duckduckgo_search
 wikipedia-api
+python-dotenv
