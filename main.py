@@ -1,3 +1,4 @@
+print("========== VERSION TEST ==========")
 import os
 import json
 from pathlib import Path
