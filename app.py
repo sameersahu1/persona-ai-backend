@@ -1,7 +1,6 @@
 import streamlit as st
 import requests
 
-
 # 1. Premium Page Setup
 st.set_page_config(
     page_title="Persona Intelligence",
@@ -965,7 +964,7 @@ if search_button and query_input:
     """, unsafe_allow_html=True)
 
     try:
-        backend_url = "https://persona-intelligence-ai.up.railway.app/api/profile"
+        backend_url = "http://127.0.0.1:8000/api/profile"
         response = requests.post(backend_url, json={"query": query_input}, timeout=45)
         loading_placeholder.empty()
 

@@ -1,4 +1,3 @@
-print("RAILWAY VERSION 999")
 import os
 import json
 from pathlib import Path
@@ -89,6 +88,7 @@ def generate_intelligence_profile(request: SearchRequest):
             sources=[]
         )
 
+    # Ironclad system instructions to extract raw, unformatted insights
     system_instruction = (
         "You are Persona, an advanced corporate intelligence system.\n"
         "Analyze the provided text context and output a profile structured in valid JSON matching this layout:\n"
@@ -103,26 +103,32 @@ def generate_intelligence_profile(request: SearchRequest):
         "1. PURE PLAIN TEXT ONLY: The 'summary' and 'insights' fields MUST contain ONLY raw text sentences. "
         "Do NOT include any HTML formatting tags, markdown styles, or backticks inside these strings.\n"
         "2. Calculate 'confidence_score' as an integer from 0 to 100 based on resource credentials and stability.\n"
-        "3. Rely ONLY on explicitly stated facts within the context. Never guess."
+        "3. Rely ONLY on explicitly stated facts within the context. Never guess.\n"
+        "4. Look at the data sources used and output their exact URLs inside the 'sources' array."
     )
     
     user_input = f"Target Entity: {cleaned_query}\n\nWeb Search Snippets:\n{json.dumps(combined_context)}"
 
     try:
+        # ===== FIXED: NOW PASSING REAL DATA OBJECTS TO THE AI MODEL =====
         completion = groq_client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=[
-                {"role": "user", "content": "Reply with exactly: Hello"}
-            ]
+                {"role": "system", "content": system_instruction},
+                {"role": "user", "content": user_input}
+            ],
+            response_format={"type": "json_object"},
+            temperature=0.0
         )
 
-        return ProfileSchema(
-            status="success",
-            confidence_score=100,
-            summary=completion.choices[0].message.content,
-            insights=["Groq connection successful"],
-            sources=[]
-        )
+        # Parse the raw JSON text response directly into a dictionary
+        parsed_json_dict = json.loads(completion.choices[0].message.content)
+        
+        # Fallback safeguard: If the AI hallucinates an empty sources array, map the actual source URLs we scraped
+        if "sources" not in parsed_json_dict or not parsed_json_dict["sources"]:
+            parsed_json_dict["sources"] = list(set([item["url"] for item in combined_context]))[:4]
+
+        return ProfileSchema(**parsed_json_dict)
 
     except Exception as e:
         import traceback
@@ -135,7 +141,7 @@ def generate_intelligence_profile(request: SearchRequest):
         return ProfileSchema(
             status="error",
             confidence_score=0,
-            summary=repr(e),
+            summary=f"Failed to generate profile safely: {str(e)}",
             insights=[],
             sources=[]
         )
