@@ -121,15 +121,15 @@ def generate_intelligence_profile(request: SearchRequest):
     except Exception as e:
         import traceback
 
-        print("===== GROQ ERROR =====")
+        print("===== ERROR START =====")
         traceback.print_exc()
-        print("Exception:", repr(e))
-        print("======================")
+        print("ERROR:", repr(e))
+        print("===== ERROR END =====")
 
         return ProfileSchema(
             status="error",
             confidence_score=0,
-            summary=f"ERROR: {repr(e)}",
+            summary=repr(e),
             insights=[],
             sources=[]
-    )
+        )
