@@ -106,23 +106,30 @@ def generate_intelligence_profile(request: SearchRequest):
 
     try:
         completion = groq_client.chat.completions.create(
-            model="llama-3.1-8b-instant",
-            messages=[
-                {"role": "system", "content": system_instruction},
-                {"role": "user", "content": user_input}
-            ],
-            response_format={"type": "json_object"},
-            temperature=0.0
-        )
+        model="llama-3.1-8b-instant",
+        messages=[
+            {"role": "system", "content": system_instruction},
+            {"role": "user", "content": user_input}
+        ],
+        response_format={"type": "json_object"},
+        temperature=0.0
+)
 
         parsed_json_dict = json.loads(completion.choices[0].message.content)
         return ProfileSchema(**parsed_json_dict)
 
     except Exception as e:
+        import traceback
+
+        print("===== GROQ ERROR =====")
+        traceback.print_exc()
+        print("Exception:", repr(e))
+        print("======================")
+
         return ProfileSchema(
             status="error",
             confidence_score=0,
-            summary=f"Failed to generate profile safely: {str(e)}",
+            summary=f"ERROR: {repr(e)}",
             insights=[],
             sources=[]
-        )
+    )
