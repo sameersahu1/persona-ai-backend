@@ -106,17 +106,19 @@ def generate_intelligence_profile(request: SearchRequest):
 
     try:
         completion = groq_client.chat.completions.create(
-        model="llama-3.1-8b-instant",
-        messages=[
-            {"role": "system", "content": system_instruction},
-            {"role": "user", "content": user_input}
-        ],
-        response_format={"type": "json_object"},
-        temperature=0.0
-)
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role": "user", "content": "Reply with exactly: Hello"}
+            ]
+        )
 
-        parsed_json_dict = json.loads(completion.choices[0].message.content)
-        return ProfileSchema(**parsed_json_dict)
+        return ProfileSchema(
+            status="success",
+            confidence_score=100,
+            summary=completion.choices[0].message.content,
+            insights=["Groq connection successful"],
+            sources=[]
+        )
 
     except Exception as e:
         import traceback
